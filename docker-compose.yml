@@ -11,7 +11,7 @@ networks:
 
 services:
   apache:
-    image: httpd:2.4.53
+    image: httpd:2.4.54
     depends_on:
       - phpfpm
     volumes:
