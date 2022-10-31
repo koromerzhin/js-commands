@@ -4,9 +4,16 @@ const yaml = require('yaml');
 const docker = new Docker();
 
 var imagesData = [];
-async function getInfoContainers(data)
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+async function getInfoContainers(data, length, sleep)
 {
-  docker.listContainers({ all: true }).then(containers => {
+  if (length == 0) {
+    console.log('last');
+    return;
+  }
+  await docker.listContainers({ all: true }).then(async (containers) => {
     var end = 0;
     var states = [];
     containers.forEach(async (containerInfo) => {
@@ -20,11 +27,12 @@ async function getInfoContainers(data)
       }
     }
 
-    if (end == Object.keys(data).length) {
-      console.log(data);
-      clearInterval(IntervalContainer);
-    } else {
+    if (end != Object.keys(data).length) {
       console.log('waiting');
+      await sleep(sleep);
+      await getInfoContainers(data, length-1, sleep);
+    } else {
+      console.log(data);
     }
   });
 }
@@ -74,21 +82,17 @@ async function readDockerCompose()
   await Promise.all(promises);
 }
 
-async function waitingContainers()
-{
-  test = {
-    'labstag_phpfpm': 'running',
-    'labstag_phpfpmexec': 'exited'
-  };
-  const IntervalContainer = await setInterval(getInfoContainers,1000, test);
-}
-
 async function global() {
   console.clear();
   await getImagesLocal();
   await readDockerCompose();
-  // Bug
-  await waitingContainers();
+  await getInfoContainers({
+    'labstag_phpfpm': 'running',
+    'labstag_phpfpmexec': 'exited'
+  },
+    -1,
+    1000
+  );
   console.log('aa');
 }
 
