@@ -3,9 +3,9 @@ const fs = require('fs');
 const yaml = require('yaml');
 const docker = new Docker();
 
-var imagesData = [];
+let imagesData = [];
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms*1000))
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -14,14 +14,14 @@ async function getInfoContainers(data, length, sleep)
     return;
   }
   await docker.listContainers({ all: true }).then(async (containers) => {
-    var end = 0;
-    var states = [];
+    let end = 0;
+    let states = [];
     containers.forEach(async (containerInfo) => {
-      var name = containerInfo.Labels['com.docker.swarm.service.name'];
-      var state = containerInfo.State;
+      let name = containerInfo.Labels['com.docker.swarm.service.name'];
+      let state = containerInfo.State;
       states[name] = state;
     });
-    for (var id in data) {
+    for (let id in data) {
       if (data[id] == states[id]) {
         end++;
       }
@@ -41,9 +41,9 @@ async function getImagesLocal()
 {
   await docker.listImages().then(images => {
     images.forEach(image => {
-      var repoTags = image.RepoTags;
+      let repoTags = image.RepoTags;
       if (repoTags != null) {
-        var tag = repoTags[0];
+        let tag = repoTags[0];
         imagesData[tag] = tag
       }
     })
@@ -68,9 +68,9 @@ async function readDockerCompose()
 {
   const file = fs.readFileSync('./docker-compose.yml', 'utf8');
   const parsing = yaml.parse(file);
-  var promises = [];
-  for (var key in parsing.services) {
-    var image = parsing.services[key].image;
+  let promises = [];
+  for (let key in parsing.services) {
+    let image = parsing.services[key].image;
     if (imagesData[image] == undefined) {
       console.log('docker pull ' + image);
       await execShellCommand('docker pull ' + image);
@@ -82,6 +82,24 @@ async function readDockerCompose()
   await Promise.all(promises);
 }
 
+async function getNameContainer(searchStack, searchContainer)
+{
+  const searchServiceName = searchStack + '_' + searchContainer;
+  let name = ''
+  await docker.listContainers({ all: true }).then(async (containers) => {
+    containers.forEach(async (containerInfo) => {
+      let stack = containerInfo.Labels['com.docker.stack.namespace'];
+      let serviceName = containerInfo.Labels['com.docker.swarm.service.name'];
+      let stackName = containerInfo.Labels['com.docker.swarm.task.name'];
+      if (stack == searchStack && serviceName == searchServiceName) {
+        name = stackName;
+      }
+    });
+  });
+
+  return name;
+}
+
 async function global() {
   console.clear();
   await getImagesLocal();
@@ -91,9 +109,10 @@ async function global() {
     'labstag_phpfpmexec': 'exited'
   },
     -1,
-    1000
+    1
   );
-  console.log('aa');
+  let name = await getNameContainer('labstag', 'phpfpm');
+  console.log(name);
 }
 
 global();
