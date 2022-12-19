@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const Docker = require('dockerode');
 const { program } = require('commander');
 const fs = require('fs');
@@ -29,7 +30,6 @@ async function getInfoContainers(data, length, sleep)
     if (end != Object.keys(data).length) {
       console.log('waiting');
       await new Promise(resolve => setTimeout(resolve, sleep*1000))
-      // await sleep(sleep);
       await getInfoContainers(data, length-1, sleep);
     } else {
       console.log(data);
