@@ -1,11 +1,10 @@
 const Docker = require('dockerode');
+const { program } = require('commander');
 const fs = require('fs');
 const yaml = require('yaml');
 const docker = new Docker();
 
 let imagesData = [];
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms*1000))
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -29,7 +28,8 @@ async function getInfoContainers(data, length, sleep)
 
     if (end != Object.keys(data).length) {
       console.log('waiting');
-      await sleep(sleep);
+      await new Promise(resolve => setTimeout(resolve, sleep*1000))
+      // await sleep(sleep);
       await getInfoContainers(data, length-1, sleep);
     } else {
       console.log(data);
@@ -101,18 +101,33 @@ async function getNameContainer(searchStack, searchContainer)
 }
 
 async function global() {
-  console.clear();
-  await getImagesLocal();
   await readDockerCompose();
-  await getInfoContainers({
-    'labstag_phpfpm': 'running',
-    'labstag_phpfpmexec': 'exited'
-  },
-    -1,
-    1
-  );
-  let name = await getNameContainer('labstag', 'phpfpm');
-  console.log(name);
 }
+program
+  .name('docker-view')
+  .description('CLI to execute command with docker')
+  .version('0.8.0');
 
-global();
+program.command('waiting')
+  .description('waiting status container')
+  .argument('<string>', 'JSON to execute')
+  .action(async (str) => {
+    await getInfoContainers(JSON.parse(str), -1, 1);
+  });
+
+program.command('getlocal-image')
+  .description('get local image')
+  .action(() => {
+    getImagesLocal();
+  });
+  
+program.command('getname-container')
+.description('get name container')
+.argument('<stack>', 'stack name')
+.argument('<container>', 'container name')
+  .action(async (stack, container) => {
+    let name = await getNameContainer(stack, container);
+    console.log(name);
+});
+
+program.parse();
