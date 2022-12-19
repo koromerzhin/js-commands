@@ -1,8 +1,14 @@
 {
-  "name": "@koromerzhin/js-commands",
+  "name": "korojscommands",
   "version": "0.0.1",
   "description": "Js commands for docker stack",
   "scripts": {},
+  "files": [
+    "index.js"
+  ],
+  "bin": {
+    "korojscommands": "index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koromerzhin/js-commands.git"
