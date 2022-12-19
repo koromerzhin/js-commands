@@ -64,9 +64,9 @@ function execShellCommand(cmd) {
   });
 }
 
-async function readDockerCompose()
+async function readDockerCompose(dockerfile)
 {
-  const file = fs.readFileSync('./docker-compose.yml', 'utf8');
+  const file = fs.readFileSync(dockerfile, 'utf8');
   const parsing = yaml.parse(file);
   let promises = [];
   for (let key in parsing.services) {
@@ -100,13 +100,10 @@ async function getNameContainer(searchStack, searchContainer)
   return name;
 }
 
-async function global() {
-  await readDockerCompose();
-}
 program
-  .name('docker-view')
+  .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('0.8.0');
+  .version('0.0.3');
 
 program.command('waiting')
   .description('waiting status container')
@@ -120,7 +117,14 @@ program.command('getlocal-image')
   .action(() => {
     getImagesLocal();
   });
-  
+
+program.command('getpull-image')
+  .description('get pull image')
+  .argument('<string>', 'File docker-compose.yml')
+  .action(async (str) => {
+    await readDockerCompose(str);
+  });
+
 program.command('getname-container')
 .description('get name container')
 .argument('<stack>', 'stack name')
