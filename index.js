@@ -37,7 +37,7 @@ async function getInfoContainers(data, length, sleep)
   });
 }
 
-async function getImagesLocal()
+async function getImagesLocal(status)
 {
   await docker.listImages().then(images => {
     images.forEach(image => {
@@ -48,8 +48,10 @@ async function getImagesLocal()
       }
     })
   });
-  console.log('Images in local');
-  console.table(imagesData);
+  if (status == 1) {
+    console.log('Images in local');
+    console.table(imagesData);
+  }
 }
 
 function execShellCommand(cmd) {
@@ -115,13 +117,14 @@ program.command('waiting')
 program.command('getlocal-image')
   .description('get local image')
   .action(() => {
-    getImagesLocal();
+    getImagesLocal(1);
   });
 
 program.command('getpull-image')
   .description('get pull image')
   .argument('<string>', 'File docker-compose.yml')
   .action(async (str) => {
+    await getImagesLocal(0);
     await readDockerCompose(str);
   });
 
