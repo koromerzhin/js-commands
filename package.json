@@ -1,6 +1,6 @@
 {
   "name": "@koromerzhin/js-commands",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Js commands for docker stack",
   "scripts": {},
   "repository": {
