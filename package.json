@@ -1,6 +1,6 @@
 {
   "name": "korojscommands",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Js commands for docker stack",
   "scripts": {},
   "files": [
@@ -27,6 +27,7 @@
   "dependencies": {
     "commander": "9.4.1",
     "dockerode": "3.3.4",
+    "dotenv": "^16.0.3",
     "koromerzhin-dependencies": "1.3.4",
     "yaml": "^2.1.3"
   }

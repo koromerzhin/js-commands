@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const Docker = require('dockerode');
+const dotenv = require('dotenv').config();
 const { program } = require('commander');
 const fs = require('fs');
 const yaml = require('yaml');
@@ -130,10 +131,14 @@ program.command('getpull-image')
 
 program.command('getname-container')
 .description('get name container')
-.argument('<stack>', 'stack name')
-.argument('<container>', 'container name')
-  .action(async (stack, container) => {
-    let name = await getNameContainer(stack, container);
+.option('--stack <stack>', 'stack name')
+.option('--container <container>', 'container name')
+  .action(async (options) => {
+    if (options.stack == undefined && dotenv.parsed.STACK != undefined) {
+      options.stack = dotenv.parsed.STACK;
+    }
+
+    let name = await getNameContainer(options.stack, options.container);
     console.log(name);
 });
 
