@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   apache:
-    image: koromerzhin/phpfpm:8.1.11
+    image: koromerzhin/phpfpm:8.1.13
     depends_on:
       - phpfpm
     volumes:
