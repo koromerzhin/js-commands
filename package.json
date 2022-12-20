@@ -1,6 +1,6 @@
 {
   "name": "korojscommands",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Js commands for docker stack",
   "scripts": {
     "help": "node index.js --help"
