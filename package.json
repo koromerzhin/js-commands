@@ -32,7 +32,7 @@
     "dockerode": "3.3.4",
     "dotenv": "^16.0.3",
     "generate-changelog": "1.8.0",
-    "gitmoji-changelog": "^1.1.0",
+    "gitmoji-changelog": "^2.0.0",
     "jscpd": "3.5.1",
     "license-checker": "25.0.1",
     "markdownlint-cli": "0.32.2",
