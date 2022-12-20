@@ -10,7 +10,7 @@ const docker = new Docker();
 let imagesData = [];
 
 if (dotenvConfig.parsed != undefined) {
-  const doteenv = dotenvConfig.parsed;
+  const dotenv = dotenvConfig.parsed;
 } else {
   const dotenv = [];
 }
@@ -30,7 +30,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('0.1.4');
+  .version('0.1.5');
 
 async function getInfoContainers(data, length, sleep)
 {
