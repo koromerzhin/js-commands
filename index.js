@@ -15,10 +15,6 @@ if (dotenvConfig.parsed != undefined) {
   const dotenv = [];
 }
 
-let currentfolder = '';
-if (!fs.existsSync('phar.json')) {
-  currentfolder = '../korojscommands/';
-}
 
 function execShellCommand(cmd) {
   return new Promise((resolve, reject) => {
@@ -34,7 +30,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('0.1.3');
+  .version('0.1.4');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -170,7 +166,7 @@ program.command('download-phar')
       }
 
 
-      let rawdata = fs.readFileSync(currentfolder+'phar.json');
+      let rawdata = fs.readFileSync(__dirname+'/phar.json');
       const phar = JSON.parse(rawdata);
       Object.keys(phar).forEach(id => {
         let command = 'wget ' + phar[id] + ' -O ' + options.folder + '/' + id;
@@ -184,7 +180,7 @@ program.command('global-command')
   .description('global Command')
   .action(() => {
   
-    let rawdata = fs.readFileSync(currentfolder+'commands.json');
+    let rawdata = fs.readFileSync(__dirname+'/commands.json');
     const commands = JSON.parse(rawdata);
     console.table(commands);
   });
