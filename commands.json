@@ -1,0 +1,9 @@
+{
+    "npx all-contributors": "Tool to easily add recognition for new contributors",
+    "npx generate-changelog": "Generate a changelog from git commits.",
+    "npx gitmoji-changelog": "Tools for generating changelog based on gitmoji convention",
+    "npx license-checker": "Check license info for a package",
+    "npx markdownlint": "MarkdownLint Command Line Interface",
+    "npx readme": "CLI that generates beautiful README.md files.",
+    "npx sgc": "A CLI for semantic git commits"
+}

@@ -1,12 +1,35 @@
 #!/usr/bin/env node
 const Docker = require('dockerode');
-const dotenv = require('dotenv').config();
+const { exec } = require('child_process');
+const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
 const fs = require('fs');
 const yaml = require('yaml');
 const docker = new Docker();
 
 let imagesData = [];
+
+if (dotenvConfig.parsed != undefined) {
+  const doteenv = dotenvConfig.parsed;
+} else {
+  const dotenv = [];
+}
+
+function execShellCommand(cmd) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+      console.warn(error);
+    }
+    resolve(stdout? stdout : stderr);
+    });
+  });
+}
+
+program
+  .name('korojscommands')
+  .description('CLI to execute command with docker')
+  .version('0.1.1');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -38,6 +61,13 @@ async function getInfoContainers(data, length, sleep)
   });
 }
 
+program.command('waiting')
+  .description('waiting status container')
+  .argument('<string>', 'JSON to execute')
+  .action(async (str) => {
+    await getInfoContainers(JSON.parse(str), -1, 1);
+  });
+
 async function getImagesLocal(status)
 {
   await docker.listImages().then(images => {
@@ -55,17 +85,11 @@ async function getImagesLocal(status)
   }
 }
 
-function execShellCommand(cmd) {
-  const exec = require('child_process').exec;
-  return new Promise((resolve, reject) => {
-    exec(cmd, (error, stdout, stderr) => {
-    if (error) {
-      console.warn(error);
-    }
-    resolve(stdout? stdout : stderr);
-    });
+program.command('getlocal-image')
+  .description('get local image')
+  .action(() => {
+    getImagesLocal(1);
   });
-}
 
 async function readDockerCompose(dockerfile)
 {
@@ -85,6 +109,14 @@ async function readDockerCompose(dockerfile)
   await Promise.all(promises);
 }
 
+program.command('getpull-image')
+  .description('get pull image')
+  .argument('<string>', 'File docker-compose.yml')
+  .action(async (str) => {
+    await getImagesLocal(0);
+    await readDockerCompose(str);
+  });
+
 async function getNameContainer(searchStack, searchContainer)
 {
   const searchServiceName = searchStack + '_' + searchContainer;
@@ -103,43 +135,52 @@ async function getNameContainer(searchStack, searchContainer)
   return name;
 }
 
-program
-  .name('korojscommands')
-  .description('CLI to execute command with docker')
-  .version('0.0.3');
-
-program.command('waiting')
-  .description('waiting status container')
-  .argument('<string>', 'JSON to execute')
-  .action(async (str) => {
-    await getInfoContainers(JSON.parse(str), -1, 1);
-  });
-
-program.command('getlocal-image')
-  .description('get local image')
-  .action(() => {
-    getImagesLocal(1);
-  });
-
-program.command('getpull-image')
-  .description('get pull image')
-  .argument('<string>', 'File docker-compose.yml')
-  .action(async (str) => {
-    await getImagesLocal(0);
-    await readDockerCompose(str);
-  });
-
 program.command('getname-container')
-.description('get name container')
-.option('--stack <stack>', 'stack name')
-.option('--container <container>', 'container name')
+  .description('get name container')
+  .option('--stack <stack>', 'stack name')
+  .option('--container <container>', 'container name')
   .action(async (options) => {
-    if (options.stack == undefined && dotenv.parsed.STACK != undefined) {
-      options.stack = dotenv.parsed.STACK;
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
     }
 
-    let name = await getNameContainer(options.stack, options.container);
-    console.log(name);
-});
+    if (option.stack != '' && options.container != undefined) {
+      let name = await getNameContainer(options.stack, options.container);
+      console.log(name);
+    } else {
+      console.warn('you must have STACK and CONTAINER option');
+    }
+  });
+
+program.command('download-phar')
+  .description('download phar in folder')
+  .option('--folder <folder>', 'folder name')
+  .action(async (options) => {
+    if (options.folder == undefined && dotenv.FOLDERPHAR != undefined) {
+      options.folder = dotenv.FOLDERPHAR;
+    }
+    if (options.folder != undefined) {
+      if (!fs.existsSync(options.folder)) {
+        await fs.promises.mkdir(options.folder);
+      }
+
+      let rawdata = fs.readFileSync('phar.json');
+      const phar = JSON.parse(rawdata);
+      Object.keys(phar).forEach(id => {
+        let command = 'wget ' + phar[id] + ' -O ' + options.folder + '/' + id;
+        console.log(command);
+        execShellCommand(command);
+      });
+    }
+  });
+
+program.command('global-command')
+  .description('global Command')
+  .action(() => {
+  
+    let rawdata = fs.readFileSync('commands.json');
+    const commands = JSON.parse(rawdata);
+    console.table(commands);
+  });
 
 program.parse();
