@@ -29,7 +29,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('0.1.1');
+  .version('0.1.2');
 
 async function getInfoContainers(data, length, sleep)
 {

@@ -1,11 +1,13 @@
 {
   "name": "korojscommands",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Js commands for docker stack",
   "scripts": {
     "help": "node index.js --help"
   },
   "files": [
+    "phar.json",
+    "commands.json",
     "index.js"
   ],
   "bin": {
