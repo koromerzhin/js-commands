@@ -37,7 +37,7 @@
     "license-checker": "25.0.1",
     "markdownlint-cli": "0.32.2",
     "readme-md-generator": "1.0.0",
-    "semantic-git-commit-cli": "^1.0.2",
+    "semantic-git-commit-cli": "^3.0.0",
     "yaml": "^2.1.3"
   }
 }
