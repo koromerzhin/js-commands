@@ -14,7 +14,6 @@ if (dotenvConfig.parsed != undefined) {
   dotenv = dotenvConfig.parsed;
 }
 
-
 function execShellCommand(cmd) {
   return new Promise((resolve, reject) => {
     exec(cmd, (error, stdout, stderr) => {
@@ -29,7 +28,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('0.1.6');
+  .version('1.0.0');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -61,7 +60,7 @@ async function getInfoContainers(data, length, sleep)
   });
 }
 
-program.command('waiting')
+program.command('docker_waiting')
   .description('waiting status container')
   .argument('<string>', 'JSON to execute')
   .action(async (str) => {
@@ -85,7 +84,7 @@ async function getImagesLocal(status)
   }
 }
 
-program.command('getlocal-image')
+program.command('docker_getlocal-image')
   .description('get local image')
   .action(() => {
     getImagesLocal(1);
@@ -109,7 +108,7 @@ async function readDockerCompose(dockerfile)
   await Promise.all(promises);
 }
 
-program.command('getpull-image')
+program.command('docker_getpull-image')
   .description('get pull image')
   .argument('<string>', 'File docker-compose.yml')
   .action(async (str) => {
@@ -135,7 +134,7 @@ async function getNameContainer(searchStack, searchContainer)
   return name;
 }
 
-program.command('getname-container')
+program.command('docker_getname-container')
   .description('get name container')
   .option('--stack <stack>', 'stack name')
   .option('--container <container>', 'container name')
@@ -152,7 +151,7 @@ program.command('getname-container')
     }
   });
 
-program.command('download-phar')
+program.command('php_download-phar')
   .description('download phar in folder')
   .option('--folder <folder>', 'folder name')
   .action(async (options) => {
@@ -164,7 +163,6 @@ program.command('download-phar')
         await fs.promises.mkdir(options.folder);
       }
 
-
       let rawdata = fs.readFileSync(__dirname+'/phar.json');
       const phar = JSON.parse(rawdata);
       Object.keys(phar).forEach(id => {
@@ -172,16 +170,98 @@ program.command('download-phar')
         console.log(command);
         execShellCommand(command);
       });
+    } else {
+      console.warn('Folder to download PHAR not found');
     }
   });
 
 program.command('global-command')
   .description('global Command')
   .action(() => {
-  
     let rawdata = fs.readFileSync(__dirname+'/commands.json');
     const commands = JSON.parse(rawdata);
     console.table(commands);
+  });
+
+program.command('bddset-mariadb')
+  .description('set bdd')
+  .option('--filesql <filesql>', 'file SQL')
+  .option('--lampy <lampy>', 'Lampy folder')
+  .action(options => {
+    if (options.filesql == undefined && dotenv.FILESQL != undefined) {
+      options.filesql = dotenv.FILESQL;
+    }
+    if (options.lampy == undefined && dotenv.FOLDERLAMPY != undefined) {
+      options.lampy = dotenv.FOLDERLAMPY;
+    }
+    if (options.filesql != undefined && options.lampy != undefined) {
+      const index = options.filesql.lastIndexOf('/');
+      let command = 'cp ' + options.filesql + ' ' + options.lampy + '/mariadb_init/' + options.filesql.slice(index + 1);
+      console.log(command)
+    } else {
+      console.warn('FILESQL + lampy folder not found');
+    }
+  })
+
+program.command('docker_swarm-init')
+  .description('docker swarm init')
+  .option('--ip <ip>', 'IP')
+  .action(options => {
+    if (options.ip == undefined && dotenv.IPSWARM != undefined) {
+      options.ip = dotenv.IPSWARM;
+    }
+    if (options.ip != undefined) {
+      docker.swarmInit({ ListenAddr: options.ip });
+    } else {
+      console.warn('IP not found');
+    }
+  });
+
+program.command('docker_create-network')
+  .description('docker create network')
+  .option('--networks <networks>', 'Networks')
+  .action(options => {
+    if (options.networks == undefined && dotenv.NETWORKS != undefined) {
+      options.networks = dotenv.NETWORKS;
+    }
+    if (options.networks != undefined) {
+      options.networks.split(',').forEach(network => {
+        docker.createNetwork({ driver: 'overlay', name: network });
+      });
+    } else {
+      console.warn('networks not found');
+    }
+  });
+
+program.command('docker_deploy')
+  .description('docker deploy')
+  .option('--stack <stack>', 'stack name')
+  .option('--files <files...>', 'Files docker-compose.yml')
+  .action(options => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.files != undefined && options.stack != undefined) {
+      let command = 'docker stack deploy -c '+ options.files.join(' -c ')+ " "+options.stack;
+      console.log(command);
+    } else {
+      console.warn('files not found');
+    }
+  });
+
+program.command('docker_ls')
+  .description('docker ls stack')
+  .option('--stack <stack>', 'stack name')
+  .action(options => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.stack != undefined) {
+      let command = 'docker stack services ' + options.stack;
+      console.log(command);
+    } else {
+      console.warn('stack not found');
+    }
   });
 
 program.parse();
