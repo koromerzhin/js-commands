@@ -28,7 +28,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('1.0.0');
+  .version('1.1.0');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -62,9 +62,23 @@ async function getInfoContainers(data, length, sleep)
 
 program.command('docker_waiting')
   .description('waiting status container')
-  .argument('<string>', 'JSON to execute')
-  .action(async (str) => {
-    await getInfoContainers(JSON.parse(str), -1, 1);
+  .option('--stack <stack>', 'stack name')
+  .option('--status <status>', 'status container')
+  .option('--container <container...>', 'container(s) name')
+  .action(async (options) => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.stack != undefined && options.status != undefined && options.container != undefined) {
+      json = [];
+      options.container.forEach(container => {
+        let name = options.stack + '_' + container;
+        json[name] = options.status;
+      });
+      await getInfoContainers(json, -1, 1);
+    } else {
+      console.warn('you must have STACK, STATUS and CONTAINER option');
+    }
   });
 
 async function getImagesLocal(status)
@@ -236,7 +250,7 @@ program.command('docker_create-network')
 program.command('docker_deploy')
   .description('docker deploy')
   .option('--stack <stack>', 'stack name')
-  .option('--files <files...>', 'Files docker-compose.yml')
+  .option('--files <files...>', 'File(s) docker-compose.yml')
   .action(options => {
     if (options.stack == undefined && dotenv.STACK != undefined) {
       options.stack = dotenv.STACK;
