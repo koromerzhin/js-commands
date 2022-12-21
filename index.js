@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const version = '1.1.4';
 const Docker = require('dockerode');
 const { exec } = require('child_process');
 const dotenvConfig = require('dotenv').config();
@@ -33,7 +34,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('1.1.3');
+  .version(version);
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -133,10 +134,16 @@ async function readDockerCompose(dockerfile)
 
 program.command('docker_getpull-image')
   .description('get pull image')
-  .argument('<string>', 'File docker-compose.yml')
-  .action(async (str) => {
+  .option('--files <files...>', 'File(s) docker-compose.yml')
+  .action(async (options) => {
     await getImagesLocal(0);
-    await readDockerCompose(str);
+    if (options.files != undefined) {
+      options.files.forEach(async (file) => {
+        await readDockerCompose(file);
+      });
+    } else {
+      console.warn('files not found');
+    }
   });
 
 async function getNameContainer(searchStack, searchContainer)
