@@ -23,5 +23,3 @@ jobs:
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm install
-      - name: Launch Script
-        run: node index.js
