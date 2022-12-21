@@ -33,7 +33,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('1.1.2');
+  .version('1.1.3');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -233,7 +233,8 @@ program.command('docker_swarm-init')
       options.ip = dotenv.IPSWARM;
     }
     if (options.ip != undefined) {
-      docker.swarmInit({ ListenAddr: options.ip });
+      let command = 'docker swarm init --default-addr-pool ' + options.ip;
+      execShellCommand(command);
     } else {
       console.warn('IP not found');
     }
