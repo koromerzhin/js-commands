@@ -16,19 +16,24 @@ if (dotenvConfig.parsed != undefined) {
 
 function execShellCommand(cmd) {
   return new Promise((resolve, reject) => {
-    exec(cmd, (error, stdout, stderr) => {
-    if (error) {
-      console.warn(error);
-    }
-    resolve(stdout? stdout : stderr);
-    });
+    exec(
+      cmd,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.warn(error);
+        }
+        
+        console.log(stdout);
+        resolve(stdout? stdout : stderr);
+      }
+    );
   });
 }
 
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('1.1.1');
+  .version('1.1.2');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -185,7 +190,6 @@ program.command('php_download-phar')
       const phar = JSON.parse(rawdata);
       Object.keys(phar).forEach(id => {
         let command = 'wget ' + phar[id] + ' -O ' + options.folder + '/' + id;
-        console.log(command);
         execShellCommand(command);
       });
     } else {
@@ -215,7 +219,7 @@ program.command('bddset-mariadb')
     if (options.filesql != undefined && options.lampy != undefined) {
       const index = options.filesql.lastIndexOf('/');
       let command = 'cp ' + options.filesql + ' ' + options.lampy + '/mariadb_init/' + options.filesql.slice(index + 1);
-      console.log(command)
+      execShellCommand(command);
     } else {
       console.warn('FILESQL + lampy folder not found');
     }
@@ -261,7 +265,7 @@ program.command('docker_deploy')
     }
     if (options.files != undefined && options.stack != undefined) {
       let command = 'docker stack deploy -c '+ options.files.join(' -c ')+ " "+options.stack;
-      console.log(command);
+      execShellCommand(command);
     } else {
       console.warn('files not found');
     }
@@ -276,7 +280,7 @@ program.command('docker_ls')
     }
     if (options.stack != undefined) {
       let command = 'docker stack services ' + options.stack;
-      console.log(command);
+      execShellCommand(command);
     } else {
       console.warn('stack not found');
     }
