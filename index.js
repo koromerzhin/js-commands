@@ -28,7 +28,7 @@ function execShellCommand(cmd) {
 program
   .name('korojscommands')
   .description('CLI to execute command with docker')
-  .version('1.1.0');
+  .version('1.1.1');
 
 async function getInfoContainers(data, length, sleep)
 {
@@ -39,6 +39,7 @@ async function getInfoContainers(data, length, sleep)
   await docker.listContainers({ all: true }).then(async (containers) => {
     let end = 0;
     let states = [];
+    let waiting = [];
     containers.forEach(async (containerInfo) => {
       let name = containerInfo.Labels['com.docker.swarm.service.name'];
       let state = containerInfo.State;
@@ -47,10 +48,13 @@ async function getInfoContainers(data, length, sleep)
     for (let id in data) {
       if (data[id] == states[id]) {
         end++;
+      } else {
+        waiting[id] = states[id];
       }
     }
 
     if (end != Object.keys(data).length) {
+      await execShellCommand('docker system prune -a -f');
       console.log('waiting');
       await new Promise(resolve => setTimeout(resolve, sleep*1000))
       await getInfoContainers(data, length-1, sleep);
