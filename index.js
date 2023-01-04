@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-const version = '1.1.6';
+const version = '1.2.0';
 const Docker = require('dockerode');
 const { exec } = require('child_process');
 const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
+const stream = require('stream');
 const fs = require('fs');
 const yaml = require('yaml');
 const docker = new Docker();
@@ -14,6 +15,11 @@ let dotenv = [];
 if (dotenvConfig.parsed != undefined) {
   dotenv = dotenvConfig.parsed;
 }
+
+const logStream = new stream.PassThrough();
+logStream.on('data', function (chunk) {
+  console.log(chunk.toString('utf8'));
+});
 
 function execShellCommand(cmd) {
   return new Promise((resolve, reject) => {
@@ -173,7 +179,7 @@ program.command('docker_getname-container')
       options.stack = dotenv.STACK;
     }
 
-    if (option.stack != '' && options.container != undefined) {
+    if (options.stack != '' && options.container != undefined) {
       let name = await getNameContainer(options.stack, options.container);
       console.log(name);
     } else {
@@ -197,6 +203,7 @@ program.command('php_download-phar')
       const phar = JSON.parse(rawdata);
       Object.keys(phar).forEach(id => {
         let command = 'wget ' + phar[id] + ' -O ' + options.folder + '/' + id;
+        console.log(command);
         execShellCommand(command);
       });
     } else {
@@ -226,6 +233,7 @@ program.command('bddset-mariadb')
     if (options.filesql != undefined && options.lampy != undefined) {
       const index = options.filesql.lastIndexOf('/');
       let command = 'cp ' + options.filesql + ' ' + options.lampy + '/mariadb_init/' + options.filesql.slice(index + 1);
+      console.log(command);
       execShellCommand(command);
     } else {
       console.warn('FILESQL + lampy folder not found');
@@ -241,6 +249,7 @@ program.command('docker_swarm-init')
     }
     if (options.ip != undefined) {
       let command = 'docker swarm init --default-addr-pool ' + options.ip;
+      console.log(command);
       execShellCommand(command);
     } else {
       console.warn('IP not found');
@@ -273,6 +282,7 @@ program.command('docker_deploy')
     }
     if (options.files != undefined && options.stack != undefined) {
       let command = 'docker stack deploy -c '+ options.files.join(' -c ')+ " "+options.stack;
+      console.log(command);
       execShellCommand(command);
     } else {
       console.warn('files not found');
@@ -288,9 +298,96 @@ program.command('docker_ls')
     }
     if (options.stack != undefined) {
       let command = 'docker stack services ' + options.stack;
+      console.log(command);
       execShellCommand(command);
     } else {
       console.warn('stack not found');
+    }
+  });
+
+async function getIdContainer(name)
+{
+  let id = null;
+  await docker.listContainers({ all: true }).then(async (containers) => {
+    containers.forEach(async (containerInfo) => {
+      if (containerInfo.Labels['com.docker.swarm.service.name'] == name) {
+        id = containerInfo.Id;
+      }
+    });
+  });
+
+  return id;
+}
+
+program.command('docker_service-update')
+  .description('docker update')
+  .option('--stack <stack>', 'stack name')
+  .option('--container <container>', 'container name')
+  .action(async (options) => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.stack != undefined && options.container != undefined) {
+      const name = options.stack + "_" + options.container;
+      let idContainer = await getIdContainer(name);
+      const service = docker.getService(idContainer);
+      service.update();
+    }else{
+      console.warn('stack and container not found');
+    }
+  });
+
+program.command('docker_inspect')
+  .description('docker inspect')
+  .option('--stack <stack>', 'stack name')
+  .option('--container <container>', 'container name')
+  .action(async (options) => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.stack != undefined && options.container != undefined) {
+      const name = options.stack + "_" + options.container;
+      let idContainer = await getIdContainer(name);
+      const container = docker.getContainer(idContainer);
+      container.inspect((err, data) => {
+        console.log(data);
+      });
+    } else {
+      console.warn('stack and container not found');
+    }
+  });
+
+program.command('docker_container-logs')
+  .description('docker logs')
+  .option('--stack <stack>', 'stack name')
+  .option('--container <container>', 'container name')
+  .action(async (options) => {
+    if (options.stack == undefined && dotenv.STACK != undefined) {
+      options.stack = dotenv.STACK;
+    }
+    if (options.stack != undefined && options.container != undefined) {
+      const name = options.stack + "_" + options.container;
+      let idContainer = await getIdContainer(name);
+      const container = docker.getContainer(idContainer);
+      container.logs({
+        follow: true,
+        stdout: true,
+        stderr: true
+      }, function(err, stream){
+        if (err) {
+          return console.error(err.message);
+        }
+        container.modem.demuxStream(stream, logStream, logStream);
+        stream.on('end', function(){
+          logStream.end('!stop!');
+        });
+    
+        setTimeout(function() {
+          stream.destroy();
+        }, 2000);
+      });
+    } else {
+      console.warn('stack and container not found');
     }
   });
 
