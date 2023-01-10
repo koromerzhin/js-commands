@@ -32,6 +32,24 @@ cd js-commands
 npm install
 ```
 
+## Build
+
+```sh
+npm run build
+```
+
+## help
+
+```sh
+npm run help
+```
+
+## Launch
+
+```sh
+node index.js
+```
+
 ## Author
 
 👤 **koromerzhin**
