@@ -12,6 +12,7 @@ export declare class ProgramAction {
     bddset_mariadb(options: any): void;
     docker_swarm_init(options: any): void;
     docker_create_network(options: any): void;
+    docker_stop(options: any): void;
     docker_deploy(options: any): void;
     docker_ls(options: any): void;
     docker_service_update(options: any): Promise<void>;

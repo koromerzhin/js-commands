@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const version = '1.2.3';
+const version = '1.2.4';
 const Docker = require('dockerode');
 const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
@@ -97,6 +97,13 @@ program.command('docker_deploy')
         programAction.docker_deploy(options);
     });
 
+program.command('docker_stop')
+    .description('docker stop stack')
+    .option('--stack <stack>', 'stack name')
+    .action((options: any) => {
+        programAction.docker_stop(options);
+    });
+
 program.command('docker_ls')
     .description('docker ls stack')
     .option('--stack <stack>', 'stack name')
@@ -121,7 +128,7 @@ program.command('docker_inspect')
     });
 
 program.command('docker_container-logs')
-    .description('docker logs')
+    .description('docker container logs')
     .option('--stack <stack>', 'stack name')
     .option('--container <container>', 'container name')
     .action(async (options: any) => {

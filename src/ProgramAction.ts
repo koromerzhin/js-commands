@@ -119,15 +119,31 @@ export class ProgramAction {
         }
     }
 
+    docker_stop(options: any) {
+        if (options.stack == undefined && this.dotenv.STACK != undefined) {
+            options.stack = this.dotenv.STACK;
+        }
+        if (options.stack != undefined) {
+            let command = 'docker stack rm ' + options.stack;
+            this.commands.exec(command);
+        } else {
+            console.warn('stack not found');
+        }
+    }
+
     docker_deploy(options: any) {
         if (options.stack == undefined && this.dotenv.STACK != undefined) {
             options.stack = this.dotenv.STACK;
         }
+        if (options.files == undefined && this.dotenv.DOCKERCOMPOSEFILES != undefined) {
+            options.files = this.dotenv.DOCKERCOMPOSEFILES;
+            options.files = options.files.split(' ');
+        }
         if (options.files != undefined && options.stack != undefined) {
-            let command = 'docker stack deploy -c ' + options.files.join(' -c ') + " " + options.stack;
+            let command = 'docker stack deploy -c ' + options.files.join(' -c ') + ' ' + options.stack;
             this.commands.exec(command);
         } else {
-            console.warn('files not found');
+            console.warn('files and stack not found');
         }
     }
 
@@ -148,7 +164,7 @@ export class ProgramAction {
             options.stack = this.dotenv.STACK;
         }
         if (options.stack != undefined && options.container != undefined) {
-            const name = options.stack + "_" + options.container;
+            const name = options.stack + '_' + options.container;
             let idContainer = await this.dockerScripts.getIdContainer(name);
             const service = this.docker.getService(idContainer);
             service.update();
@@ -162,7 +178,7 @@ export class ProgramAction {
             options.stack = this.dotenv.STACK;
         }
         if (options.stack != undefined && options.container != undefined) {
-            const name = options.stack + "_" + options.container;
+            const name = options.stack + '_' + options.container;
             let idContainer = await this.dockerScripts.getIdContainer(name);
             const container = this.docker.getContainer(idContainer);
             container.inspect((err: any, data: any) => {
@@ -174,7 +190,6 @@ export class ProgramAction {
     }
 
     async docker_container_logs(options: any) {
-        
         const stream = require('stream');
         const logStream = new stream.PassThrough();
         logStream.on('data', (chunk: any) => {
@@ -184,7 +199,7 @@ export class ProgramAction {
             options.stack = this.dotenv.STACK;
         }
         if (options.stack != undefined && options.container != undefined) {
-            const name = options.stack + "_" + options.container;
+            const name = options.stack + '_' + options.container;
             let idContainer = await this.dockerScripts.getIdContainer(name);
             const container = this.docker.getContainer(idContainer);
             container.logs({
