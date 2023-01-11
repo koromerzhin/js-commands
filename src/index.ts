@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const version = '1.2.0';
+const version = '1.2.1';
 const Docker = require('dockerode');
 const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
@@ -10,13 +10,13 @@ if (dotenvConfig.parsed != undefined) {
     dotenv = dotenvConfig.parsed;
 }
 
-import * as ExportCommands from './src/Commands';
+import * as ExportCommands from './Commands';
 let commands = new ExportCommands.Commands();
 
-import * as ExportDockerScripts from './src/DockerScripts';
+import * as ExportDockerScripts from './DockerScripts';
 let dockerScripts = new ExportDockerScripts.DockerScripts(docker, commands);
 
-import * as ExportProgramAction from './src/ProgramAction';
+import * as ExportProgramAction from './ProgramAction';
 let programAction = new ExportProgramAction.ProgramAction(dotenv, docker, commands, dockerScripts);
 
 program

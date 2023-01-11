@@ -1,6 +1,6 @@
 {
   "name": "korojscommands",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Js commands for docker stack",
   "scripts": {
     "build": "tsc",
@@ -8,13 +8,14 @@
     "publish": "npm run buil && npm publish"
   },
   "files": [
+    "dist",
+    "src",
     "phar.json",
     ".env.example",
-    "commands.json",
-    "index.js"
+    "commands.json"
   ],
   "bin": {
-    "korojscommands": "index.js"
+    "korojscommands": "lib/index.js"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,7 @@
     "url": "https://github.com/koromerzhin/js-commands/issues"
   },
   "homepage": "https://github.com/koromerzhin/js-commands#readme",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "all-contributors-cli": "6.24.0",
     "commander": "9.4.1",
