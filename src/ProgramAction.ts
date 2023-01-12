@@ -65,7 +65,7 @@ export class ProgramAction {
                 await fs.promises.mkdir(options.folder);
             }
 
-            let rawdata = fs.readFileSync(__dirname + '/phar.json');
+            let rawdata = fs.readFileSync(__dirname + '/../phar.json');
             const phar = JSON.parse(rawdata);
             Object.keys(phar).forEach(id => {
                 let command = 'wget ' + phar[id] + ' -O ' + options.folder + '/' + id;
