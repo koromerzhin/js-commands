@@ -64,7 +64,7 @@ export class DockerScripts {
         let promises: any = [];
         for (let key in parsing.services) {
             let image = parsing.services[key].image;
-            if (this.imagesData[image] == undefined) {
+            if (this.imagesData[image] == undefined && image != undefined) {
                 await this.commands.exec('docker pull ' + image);
 
                 this.imagesData[image] = image;
