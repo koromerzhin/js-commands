@@ -30,6 +30,10 @@ export class ProgramAction {
 
     async docker_getpull_image(options: any) {
         await this.dockerScripts.getImagesLocal(0);
+        if (options.files == undefined && this.dotenv.DOCKERCOMPOSEFILES != undefined) {
+            options.files = this.dotenv.DOCKERCOMPOSEFILES;
+            options.files = options.files.split(' ');
+        }
         if (options.files != undefined) {
             options.files.forEach(async (file: any) => {
                 await this.dockerScripts.readDockerCompose(file);
