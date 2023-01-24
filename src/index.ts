@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const version = '1.2.9';
+const version = '1.2.10';
 const Docker = require('dockerode');
 const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
