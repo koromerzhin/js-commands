@@ -4,7 +4,8 @@
   "description": "Js commands for docker stack",
   "scripts": {
     "build": "tsc",
-    "help": "node index.js --help"
+    "help": "node index.js --help",
+    "lint:markdown": "markdownlint README.md"
   },
   "files": [
     "lib",

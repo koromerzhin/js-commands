@@ -16,6 +16,8 @@ jobs:
         run: npm install
       - name: Install npm dependencies
         run: npm run build
+      - name: linter readme.md
+        run: npm run lint:markdown
       - name: Check contributors
         if: github.ref == 'refs/heads/develop'
         run: npx all-contributors check
