@@ -111,9 +111,16 @@ export class ProgramAction {
             options.lampy = this.dotenv.FOLDERLAMPY;
         }
         if (options.filesql != undefined && options.lampy != undefined) {
-            const index = options.filesql.lastIndexOf('/');
-            let command = 'cp ' + options.filesql + ' ' + options.lampy + '/mariadb_init/' + options.filesql.slice(index + 1);
-            this.commands.exec(command);
+            var files = options.filesql;
+            if (!files.isArray()) {
+                files = files.split(' ');
+            }
+
+            files.forEach((file: string) => {
+                const index = file.lastIndexOf('/');
+                let command = 'cp ' + file + ' ' + options.lampy + '/mariadb_init/' + file.slice(index + 1);
+                this.commands.exec(command);
+            });
         } else {
             console.warn('FILESQL + lampy folder not found');
         }
@@ -165,7 +172,9 @@ export class ProgramAction {
         }
         if (options.files == undefined && this.dotenv.DOCKERCOMPOSEFILES != undefined) {
             options.files = this.dotenv.DOCKERCOMPOSEFILES;
-            options.files = options.files.split(' ');
+            if (!options.files.isArray()) {
+                options.files = options.files.split(' ');
+            }
         }
         if (options.files != undefined && options.stack != undefined) {
             let command = 'docker stack deploy -c ' + options.files.join(' -c ') + ' ' + options.stack;
