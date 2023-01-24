@@ -1,4 +1,5 @@
 const fs = require('fs');
+const yaml = require('yaml');
 export class ProgramAction {
     dotenv: any = []
     docker: any;
@@ -27,7 +28,6 @@ export class ProgramAction {
             console.warn('you must have STACK, STATUS and CONTAINER option');
         }
     }
-
     async docker_getpull_image(options: any) {
         await this.dockerScripts.getImagesLocal(0);
         if (options.files == undefined && this.dotenv.DOCKERCOMPOSEFILES != undefined) {
@@ -42,6 +42,27 @@ export class ProgramAction {
             console.warn('files not found');
         }
     }
+
+    async docker_get_image(options: any) {
+        if (options.files == undefined && this.dotenv.DOCKERCOMPOSEFILES != undefined) {
+            options.files = this.dotenv.DOCKERCOMPOSEFILES;
+            options.files = options.files.split(' ');
+        }
+        if (options.files != undefined && options.key != undefined) {
+            options.files.forEach(async (dockerfile: any) => {
+                const file = fs.readFileSync(dockerfile, 'utf8');
+                const parsing = yaml.parse(file);
+                for (let key in parsing.services) {
+                    if (key == options.key) {
+                        console.log(parsing.services[key].image);
+                    }
+                }
+            });
+        } else {
+            console.warn('files and key not found');
+        }
+    }
+
 
     async docker_getname_container(options: any) {
         if (options.stack == undefined && this.dotenv.STACK != undefined) {
@@ -104,6 +125,9 @@ export class ProgramAction {
         }
         if (options.ip != undefined) {
             let command = 'docker swarm init --default-addr-pool ' + options.ip;
+            if (this.dotenv.ADVERTISEADDR != undefined) {
+                command += ' --advertise-addr ' + this.dotenv.ADVERTISEADDR;
+            }
             this.commands.exec(command);
         } else {
             console.warn('IP not found');

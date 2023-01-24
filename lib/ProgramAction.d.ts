@@ -6,6 +6,7 @@ export declare class ProgramAction {
     constructor(dotenv: any, docker: any, commands: any, dockerScripts: any);
     docker_waiting(options: any): Promise<void>;
     docker_getpull_image(options: any): Promise<void>;
+    docker_get_image(options: any): Promise<void>;
     docker_getname_container(options: any): Promise<void>;
     php_download_phar(options: any): Promise<void>;
     global_command(): void;

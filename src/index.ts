@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const version = '1.2.7';
+const version = '1.2.8';
 const Docker = require('dockerode');
 const dotenvConfig = require('dotenv').config();
 const { program } = require('commander');
@@ -44,6 +44,14 @@ program.command('docker_getpull-image')
     .option('--files <files...>', 'File(s) docker-compose.yml')
     .action(async (options: any) => {
         await programAction.docker_getpull_image(options);
+    });
+
+program.command('docker_get-image')
+    .description('get image')
+    .option('--files <files...>', 'File(s) docker-compose.yml')
+    .option('--key <key>', 'Key of services')
+    .action(async (options: any) => {
+        await programAction.docker_get_image(options);
     });
 
 program.command('docker_getname-container')
