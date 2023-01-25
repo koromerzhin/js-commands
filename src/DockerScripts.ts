@@ -49,7 +49,11 @@ export class DockerScripts {
                 let repoTags = image.RepoTags;
                 if (repoTags != null) {
                     let tag = repoTags[0];
-                    this.imagesData[tag] = tag
+                    this.imagesData[tag] = {
+                        'name': tag,
+                        'size': image.Size,
+                        'virtualsize': image.VirtualSize
+                    };
                 }
             })
         });
