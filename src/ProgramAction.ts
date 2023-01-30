@@ -53,7 +53,7 @@ export class ProgramAction {
                 const file = fs.readFileSync(dockerfile, 'utf8');
                 const parsing = yaml.parse(file);
                 for (let key in parsing.services) {
-                    if (key == options.key) {
+                    if (key == options.key && parsing.services[key].image != undefined) {
                         console.log(parsing.services[key].image);
                     }
                 }
