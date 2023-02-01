@@ -1,6 +1,6 @@
 {
   "name": "korojscommands",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "description": "Js commands for docker stack",
   "scripts": {
     "build": "tsc",
@@ -32,6 +32,7 @@
   "dependencies": {
     "all-contributors-cli": "6.24.0",
     "commander": "10.0.0",
+    "cypress": "^12.5.0",
     "dockerode": "3.3.4",
     "dotenv": "^16.0.3",
     "generate-changelog": "1.8.0",
