@@ -1,10 +1,10 @@
 {
   "phploc.phar": "https://phar.phpunit.de/phploc-7.0.2.phar",
-  "php-cs-fixer.phar": "https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.14.4/php-cs-fixer.phar",
+  "php-cs-fixer.phar": "https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.15.1/php-cs-fixer.phar",
   "phpmd.phar": "https://github.com/phpmd/phpmd/releases/download/2.13.0/phpmd.phar",
   "phpcbf.phar": "https://github.com/squizlabs/PHP_CodeSniffer/releases/download/3.7.2/phpcbf.phar",
   "phpcs.phar": "https://github.com/squizlabs/PHP_CodeSniffer/releases/download/3.7.2/phpcs.phar",
-  "phpstan.phar": "https://github.com/phpstan/phpstan/releases/download/1.10.5/phpstan.phar",
+  "phpstan.phar": "https://github.com/phpstan/phpstan/releases/download/1.10.8/phpstan.phar",
   "phpDocumentor.phar": "https://github.com/phpDocumentor/phpDocumentor/releases/download/v3.3.1/phpDocumentor.phar",
   "behat.phar": "https://github.com/Behat/Behat/releases/download/v3.12.0/behat.phar"
 }
