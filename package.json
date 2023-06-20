@@ -9,7 +9,6 @@
   },
   "files": [
     "lib",
-    "src",
     "phar.json",
     ".env.example",
     "commands.json"
