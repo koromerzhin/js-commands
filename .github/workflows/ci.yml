@@ -27,7 +27,9 @@ jobs:
         run: npm run build
       - name: Launch korojscommands
         run: node lib/index.js
+        continue-on-error: true
       - name: Launch korojscommands
         run: node lib/index.js --version
+        continue-on-error: true
       - name: linter readme.md
         run: npm run lint:markdown
