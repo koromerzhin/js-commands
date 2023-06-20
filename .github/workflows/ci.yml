@@ -28,6 +28,8 @@ jobs:
       - name: Launch korojscommands
         run: node lib/index.js
         continue-on-error: true
+      - name: Check global-command
+        run: node lib/index.js global-command
       - name: Check version
         run: node lib/index.js --version
       - name: linter readme.md
