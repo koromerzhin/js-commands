@@ -1,6 +1,6 @@
 {
   "name": "korojscommands",
-  "version": "1.2.19",
+  "version": "1.2.20",
   "description": "Js commands for docker stack",
   "scripts": {
     "build": "tsc",
