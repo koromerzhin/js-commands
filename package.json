@@ -29,7 +29,7 @@
   "homepage": "https://github.com/koromerzhin/js-commands#readme",
   "main": "lib/index.js",
   "dependencies": {
-    "all-contributors-cli": "6.26.0",
+    "all-contributors-cli": "6.26.1",
     "commander": "11.0.0",
     "cypress": "^12.5.0",
     "dockerode": "3.3.5",
