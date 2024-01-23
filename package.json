@@ -33,7 +33,7 @@
     "commander": "11.0.*",
     "cypress": "13.3.*",
     "dockerode": "3.3.*",
-    "dotenv": "16.3.*",
+    "dotenv": "16.4.*",
     "generate-changelog": "1.8.*",
     "gitmoji-changelog": "2.3.*",
     "jscpd": "3.5.*",
