@@ -39,7 +39,7 @@
     "jscpd": "3.5.*",
     "license-checker": "25.0.*",
     "markdownlint-cli": "0.37.*",
-    "npm-run-all": "4.1.*",
+    "npm-run-all2": "5.0.*",
     "readme-md-generator": "1.0.*",
     "semantic-git-commit-cli": "3.7.*",
     "yaml": "2.3.*"
