@@ -50,6 +50,12 @@ npm run help
 node index.js
 ```
 
+## Publish
+
+```sh
+npm publish
+```
+
 ## Author
 
 👤 **koromerzhin**

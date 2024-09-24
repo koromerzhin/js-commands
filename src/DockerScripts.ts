@@ -34,7 +34,7 @@ export class DockerScripts {
 
             if (end != Object.keys(data).length) {
                 await this.commands.exec('docker system prune -a -f');
-                console.log('waiting');
+                console.log('waiting', waiting);
                 await new Promise(resolve => setTimeout(resolve, sleep * 1000))
                 await this.getInfoContainers(data, length - 1, sleep);
             } else {
