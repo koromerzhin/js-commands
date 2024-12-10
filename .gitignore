@@ -2,3 +2,4 @@
 /src/*.js
 /*.js
 .env
+lib
