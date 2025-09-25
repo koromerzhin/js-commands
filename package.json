@@ -30,7 +30,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "all-contributors-cli": "6.26.*",
-    "commander": "11.0.*",
+    "commander": "11.1.*",
     "cypress": "13.3.*",
     "dockerode": "3.3.*",
     "dotenv": "16.3.*",
